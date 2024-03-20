@@ -2,11 +2,13 @@
 #include <sstream>
 #include <random>
 
-int ipclassarray[3][3] = {
-{0  , 128, 192},
-{127, 191, 223},
-{8  , 16 , 24},
+int ipclassarray[3][4] = {
+{0  , 128, 192, 224},
+{127, 191, 223, 255},
+{8  , 16 , 24, 4},
 };
+
+char ipclasschar[4] = {'A','B','C','D'};
 
 int octetarray[3][4] = {
 {1 , 9 , 17, 25},
@@ -66,7 +68,7 @@ public:
     
     // COB
     // C: class and default mask
-    int ipclass = 0;
+    char ipclass;
     int defmask = 0;
 
     // O: octet number
@@ -77,10 +79,10 @@ public:
 
     void determineCOB() {
         //determines the class and default
-        for (int i = 0; i < 3; i++) {
-            if (ip[i] <= ipclassarray[1][i]) {
-                //std::cout << "ip:"<< ip[i] << "ipclassarray[][]:" << ipclassarray[1][i] << "\n";
-                ipclass = i + 1;
+        for (int i = 0; i < 4; i++) {
+            if (ip[0] <= ipclassarray[1][i]) {
+                std::cout << "ip:"<< ip[0] << "ipclassarray[][]:" << ipclassarray[1][i] << "\n";
+                ipclass = ipclasschar[i];
                 defmask = ipclassarray[2][i];
                 i = 99;
             }
@@ -175,12 +177,11 @@ public:
 };
 
 int main() {
+    
+    ipaddress ip1;
     while (true) {
-        
-        ipaddress ip1;
-        
         std::cout << "-----\n";
-        std::cout << "Input IPV4:\n";
+        std::cout << "Input IPV4 (ex: 192 168 1 1):\n";
         std::cin >> ip1.ip[0];
         std::cin >> ip1.ip[1];
         std::cin >> ip1.ip[2];
@@ -190,19 +191,19 @@ int main() {
         std::cout << "\n";
 
         ip1.determineCOB();
-        std::cout << "C:" << ip1.ipclass << "/" << ip1.defmask << "\n";
-        std::cout << "O:" << ip1.octet << "\n";
-        std::cout << "B:" << ip1.bitvalue << "\n";
+        std::cout << "Class: " << ip1.ipclass << "/" << ip1.defmask << "\n";
+        std::cout << "Octet: " << ip1.octet << "\n";
+        std::cout << "Bit value: " << ip1.bitvalue << "\n";
 
         ip1.determineNFLBX();
-        std::cout << "\nN:" << ip1.netid[0] << "." << ip1.netid[1] << "." << ip1.netid[2] << "." << ip1.netid[3] << "\n";
-        std::cout << "F:" << ip1.fnet[0] << "." << ip1.fnet[1] << "." << ip1.fnet[2] << "." << ip1.fnet[3] << "\n";
-        std::cout << "L:" << ip1.lnet[0] << "." << ip1.lnet[1] << "." << ip1.lnet[2] << "." << ip1.lnet[3] << "\n";
-        std::cout << "B:" << ip1.bnet[0] << "." << ip1.bnet[1] << "." << ip1.bnet[2] << "." << ip1.bnet[3] << "\n";
-        std::cout << "X:" << ip1.xnet[0] << "." << ip1.xnet[1] << "." << ip1.xnet[2] << "." << ip1.xnet[3] << "\n";
+        std::cout << "\nNetwork ID: " << ip1.netid[0] << "." << ip1.netid[1] << "." << ip1.netid[2] << "." << ip1.netid[3] << "\n";
+        std::cout << "First usable: " << ip1.fnet[0] << "." << ip1.fnet[1] << "." << ip1.fnet[2] << "." << ip1.fnet[3] << "\n";
+        std::cout << "Last usable: " << ip1.lnet[0] << "." << ip1.lnet[1] << "." << ip1.lnet[2] << "." << ip1.lnet[3] << "\n";
+        std::cout << "Broadcast: " << ip1.bnet[0] << "." << ip1.bnet[1] << "." << ip1.bnet[2] << "." << ip1.bnet[3] << "\n";
+        std::cout << "Next network: " << ip1.xnet[0] << "." << ip1.xnet[1] << "." << ip1.xnet[2] << "." << ip1.xnet[3] << "\n";
 
         ip1.determineHN();
-        std::cout << "Hosts: " << ip1.hosts << "\n";
+        std::cout << "\nHosts: " << ip1.hosts << "\n";
         std::cout << "Networks: " << ip1.networks << "\n";
 
     }
